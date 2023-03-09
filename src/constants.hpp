@@ -7,7 +7,7 @@
 // Bitte die passende Platine durch entfernen der Kommentare in einer der folgenden Zeilen auswählen
 //#define TonUINO_Classic
 //#define ALLinONE
-//#define ALLinONE_Plus
+#define ALLinONE_Plus
 
 // uncomment the below line to enable five button support (already enabled for AiO and AiO+)
 // um dedizierte Lauter-/Leiserknöpfe zu haben bitte die nächste Zeile auskommentieren (Standard bei AiO und AiO+)
@@ -15,7 +15,7 @@
 
 // uncomment the below line to enable serial input as additional command source
 // um den Serial Monitor als zusätzliche Kommandoquelle zu haben bitte in der nächste Zeile den Kommentar entfernen
-//#define SerialInputAsCommand
+#define SerialInputAsCommand
 // 7:            8: up         9: upLong
 // 4: allLong    5: pause      6: pauseLong
 // 1:            2: down       3: downLong
