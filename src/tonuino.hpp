@@ -4,6 +4,8 @@
 #include "settings.hpp"
 #include "commands.hpp"
 #include "buttons.hpp"
+#include "buttons3x3.hpp"
+#include "rotary_encoder.hpp"
 #include "serial_input.hpp"
 #include "mp3.hpp"
 #include "modifier.hpp"
@@ -54,11 +56,23 @@ private:
 #ifdef SerialInputAsCommand
   SerialInput          serialInput         {};
 #endif
+#ifdef BUTTONS3X3
+  Buttons3x3           buttons3x3          {};
+#endif
+#ifdef ROTARY_ENCODER
+  RotaryEncoder        rotaryEncoder       {settings};
+#endif
   Commands             commands            {
                                             settings
                                           , &buttons
 #ifdef SerialInputAsCommand
                                           , &serialInput
+#endif
+#ifdef BUTTONS3X3
+                                          , &buttons3x3
+#endif
+#ifdef ROTARY_ENCODER
+                                          , &rotaryEncoder
 #endif
                                            };
   Chip_card            chip_card           {mp3};
