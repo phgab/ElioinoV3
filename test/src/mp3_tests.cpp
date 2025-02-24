@@ -9,7 +9,12 @@ public:
   mp3_test_fixture()
   : tonuino(Tonuino::getTonuino())
   , mp3(tonuino.getMp3())
-  {}
+  {
+    mp3.reset_to_initial_state();
+    mp3.clearAllQueue();
+    folderSettings card = { 1, pmode_t::album, 0, 0 };
+    tonuino.setMyFolder(card, true);
+  }
 
   void execute_cycle() {
     mp3.loop();
@@ -97,6 +102,21 @@ TEST_F(mp3_test_fixture, enqueue_folder_tracks) {
   EXPECT_TRUE(mp3.is_stopped());
 }
 
+TEST_F(mp3_test_fixture, enqueue_folder_tracks_no_chrash) {
+  mp3.enqueueTrack(1, 2, 255);
+  execute_cycle();
+
+  for (uint16_t t = 2; t <= 255; ++t) {
+    EXPECT_TRUE(mp3.is_playing_folder());
+    EXPECT_EQ(mp3.df_folder, 1);
+    EXPECT_EQ(mp3.df_folder_track, t);
+    mp3.end_track();
+    execute_cycle();
+    execute_cycle();
+  }
+  EXPECT_TRUE(mp3.is_stopped());
+}
+
 TEST_F(mp3_test_fixture, enqueue_folder_tracks_with_current) {
   mp3.enqueueTrack(1, 2, 12, 3);
   execute_cycle();
@@ -120,7 +140,7 @@ TEST_F(mp3_test_fixture, enqueue_folder_tracks_and_jump) {
   EXPECT_EQ(mp3.df_folder, 1);
   EXPECT_EQ(mp3.df_folder_track, 2);
 
-  mp3.playNext();
+  mp3.playNext(1, false);
   execute_cycle();
   execute_cycle();
 
@@ -128,7 +148,7 @@ TEST_F(mp3_test_fixture, enqueue_folder_tracks_and_jump) {
   EXPECT_EQ(mp3.df_folder, 1);
   EXPECT_EQ(mp3.df_folder_track, 3);
 
-  mp3.playNext(2);
+  mp3.playNext(2, false);
   execute_cycle();
   execute_cycle();
 

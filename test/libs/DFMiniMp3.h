@@ -92,11 +92,19 @@ class Mp3ChipOriginal
 {
 };
 
-template <class T_SERIAL_METHOD, class T_NOTIFICATION_METHOD, class T_CHIP_VARIANT = Mp3ChipOriginal>
+class Mp3ChipIncongruousNoAck
+{
+};
+
+template <class T_SERIAL_METHOD, class T_NOTIFICATION_METHOD, class T_CHIP_VARIANT = Mp3ChipOriginal, uint32_t C_ACK_TIMEOUT = 900>
 class DFMiniMp3
 {
 public:
     explicit DFMiniMp3(T_SERIAL_METHOD& serial)
+    {
+    }
+
+    void reset()
     {
     }
 
@@ -128,8 +136,12 @@ public:
       }
       if (called_start) {
         called_start = false;
-        if (!df_stopped)
-          df_playing = true;
+        if (!df_stopped) { // id not stopped before, start first track
+          df_stopped = false;
+          if (!df_folder) df_folder = 1;
+          if (!df_folder_track) df_folder_track = 1;
+        }
+        df_playing = true;
       }
       if (called_pause) {
         called_pause = false;
@@ -189,6 +201,11 @@ public:
       current_volume = volume;
     }
 
+    uint8_t getVolume()
+    {
+      return current_volume;
+    }
+
     DfMp3_Eq current_eq = DfMp3_Eq_Normal;
     void setEq(DfMp3_Eq eq)
     {
@@ -217,6 +234,11 @@ public:
     void stop()
     {
       called_stop = true;
+    }
+
+    uint16_t getTotalTrackCount()
+    {
+      return 1;
     }
 
     uint16_t getFolderTrackCount(uint16_t folder)
@@ -270,6 +292,21 @@ public:
     }
     bool is_stopped() {
       return df_stopped;
+    }
+
+    void reset_to_initial_state() {
+      df_playing = false;
+      df_playing_adv = false;
+      df_playing_adv_counter = 0;
+      df_stopped = true;
+      df_mp3_track = 0;
+      df_folder = 0;
+      df_folder_track = 0;
+      df_adv_track = 0;
+      called_sleep = false;
+      called_start = false;
+      called_pause = false;
+      called_stop = false;
     }
 
 };

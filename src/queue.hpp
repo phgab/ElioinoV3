@@ -3,6 +3,22 @@
 
 #include "array.hpp"
 
+inline void setBit  (uint8_t &v, uint8_t b) { v |=  (1<<b); }
+inline void clearBit(uint8_t &v, uint8_t b) { v &= ~(1<<b); }
+inline bool getBit  (uint8_t &v, uint8_t b) { return v & (1<<b); }
+
+template<uint8_t BITS>
+class bitfield {
+public:
+  void setBit  (uint8_t n) { uint8_t &v = bits[n/8]; ::setBit  (v, n%8); }
+  void clearBit(uint8_t n) { uint8_t &v = bits[n/8]; ::clearBit(v, n%8); }
+  bool getBit  (uint8_t n) { uint8_t &v = bits[n/8]; return ::getBit(v, n%8); }
+  void setAll  (uint8_t v) { for (uint8_t i = 0; i < BITS/8+1; ++i) bits[i] = v; }
+
+private:
+  uint8_t bits[BITS/8+1]{};
+};
+
 template<typename T>
 void swap(T &lhs, T &rhs) {
   const T t = lhs;
@@ -17,9 +33,7 @@ public:
     if (s < N)
       c[s++] = t;
   }
-  T get (uint8_t pos) {
-    if (pos >= s)
-      return T{};
+  T &get (uint8_t pos) {
     return c[pos];
   }
   void clear() { s = 0; }
@@ -31,6 +45,12 @@ public:
       swap(c[i], c[j]);
     }
   }
+  // Iterators
+  T *begin() { return c.begin(); }
+  const T *begin() const { return c.begin(); }
+  T *end() { return &c[s]; }
+  const T *end() const { return &c[s]; }
+
 private:
   array<T, N> c{};
   uint8_t     s{};
