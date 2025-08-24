@@ -77,7 +77,7 @@
 //#define TonUINO_Every
 //#define TonUINO_Every_4808
 //#define ALLinONE
-//#define ALLinONE_Plus
+#define ALLinONE_Plus
 //#define TonUINO_Esp32 100 // Esp32 Nano
 
 #include "gpioHelper.hpp"
